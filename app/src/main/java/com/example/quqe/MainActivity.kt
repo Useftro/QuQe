@@ -4,10 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.os.Bundle
-import android.os.Environment
-import android.util.Base64
 import android.util.Base64.encodeToString
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -15,15 +12,12 @@ import androidx.core.content.ContextCompat
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import kotlin.random.Random
-import kotlin.reflect.typeOf
 
 private var buttonUsed: Boolean = false
 private var output: String? = null
@@ -40,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         mediaRecorder?.setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
         mediaRecorder?.setOutputFile(output)
 
-        val url = "http://9c2add012d49.ngrok.io/uploadfile" // Заменять каждые 8 ЧАСОВ, АУ
+        val url = "http://9c2add012d49.ngrok.io/uploadfile"
         //http://127.0.0.1:5000/uploadfile
 
         startButton.setOnClickListener{
@@ -49,8 +43,8 @@ class MainActivity : AppCompatActivity() {
                     Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED &&
                 ContextCompat.checkSelfPermission(this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                val permissions = arrayOf(android.Manifest.permission.RECORD_AUDIO,
-                    android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                val permissions = arrayOf(Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
                 ActivityCompat.requestPermissions(this, permissions,0)
 
             }
@@ -60,8 +54,8 @@ class MainActivity : AppCompatActivity() {
                 }
                 else{
                     stopRecording()
-                    var mhm = fileToBytes()
-                    var encoded = Base64.encodeToString(mhm, 0)
+                    val bytesOfSound = fileToBytes()
+                    val encoded = encodeToString(bytesOfSound, 0)
                     val params = HashMap<String, String>()
                     params["sound"] = encoded
 
@@ -69,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
                     // запись в файл для теста
 //                    var fos: FileOutputStream = FileOutputStream(Environment.getExternalStorageDirectory().absolutePath + "/test.txt")
-//                    fos.write(mhm)
+//                    fos.write(bytesOfSound)
 //                    fos.close()
                 }
             }
@@ -96,10 +90,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fileToBytes(): ByteArray {
-        var file = File(output)
-        var bytes: ByteArray = file.readBytes()
+        val file = File(output!!)
         // var encoded = encodeToString(bytes, 0)
-        return bytes
+        return file.readBytes()
     }
 
     private fun startRecording(){
