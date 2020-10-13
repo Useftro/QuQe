@@ -1,0 +1,8 @@
+<resources>
+    <string name="start_recording"> Start </string>
+    <string name="stop_recording"> Stop </string>
+
+    <string name="button_not_used">Button not used</string>
+    <string name="button_used">Button used</string>
+    <string name="didnt_work">That didn\'t work!</string>
+</resources>
